@@ -1,0 +1,178 @@
+---
+title: "Final Data Analysis Code"
+author: "Lars Wagener"
+date: "12/8/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+````{r}
+#Loads spotifyr and gets access to the API
+library(spotifyr)
+
+Sys.setenv(SPOTIFY_CLIENT_ID = '3e2ffc9154ba4bdf885282b6afab8e1a')
+Sys.setenv(SPOTIFY_CLIENT_SECRET = '5325176284b34d2a9ab13ececac8a417')
+
+access_token <- get_spotify_access_token()
+
+```
+
+```{r}
+#Loads relevant libraries and gets the data into R
+
+library(shiny)
+library(corrplot)
+library(shinyWidgets)
+library(ggplot2)
+library(plotly)
+library(rstatix)
+library(R.utils)
+library(ggjoy)
+library(dplyr)
+library(ggpubr)
+Global <- get_playlist_audio_features('spotify', '37i9dQZEVXbMDoHDwVN2tF')
+US <- get_playlist_audio_features('spotify', '37i9dQZEVXbLRQDuF5jeBp')
+Argentina <- get_playlist_audio_features('spotify', '37i9dQZEVXbMMy2roB9myp')
+Australia <- get_playlist_audio_features('spotify', '37i9dQZEVXbJPcfkRz0wJ0')
+Austria <- get_playlist_audio_features('spotify', '37i9dQZEVXbKNHh6NIXu36')
+Belgium <- get_playlist_audio_features('spotify', '37i9dQZEVXbJNSeeHswcKB')
+Bolivia <- get_playlist_audio_features('spotify', '37i9dQZEVXbJqfMFK4d691')
+Brazil <- get_playlist_audio_features('spotify', '37i9dQZEVXbMXbN3EUUhlg')
+Bulgaria <- get_playlist_audio_features('spotify', '37i9dQZEVXbNfM2w2mq1B8')
+Canada <- get_playlist_audio_features('spotify', '37i9dQZEVXbKj23U1GF4IR')
+Chile <- get_playlist_audio_features('spotify', '37i9dQZEVXbL0GavIqMTeb')
+Columbia <- get_playlist_audio_features('spotify', '37i9dQZEVXbOa2lmxNORXQ')
+CostaRica <- get_playlist_audio_features('spotify', '37i9dQZEVXbMZAjGMynsQX')
+CzechRep <- get_playlist_audio_features('spotify', '37i9dQZEVXbIP3c3fqVrJY')
+Denmark <- get_playlist_audio_features('spotify', '37i9dQZEVXbL3J0k32lWnN')
+DominicanRep <- get_playlist_audio_features('spotify', '37i9dQZEVXbKAbrMR8uuf7')
+Ecuador <- get_playlist_audio_features('spotify', '37i9dQZEVXbJlM6nvL1nD1')
+ElSalvador <- get_playlist_audio_features('spotify', '37i9dQZEVXbLxoIml4MYkT')
+Estonia <- get_playlist_audio_features('spotify', '37i9dQZEVXbLesry2Qw2xS')
+Finland <- get_playlist_audio_features('spotify', '37i9dQZEVXbMxcczTSoGwZ')
+France <- get_playlist_audio_features('spotify', '37i9dQZEVXbIPWwFssbupI')
+Germany <- get_playlist_audio_features('spotify', '37i9dQZEVXbJiZcmkrIHGU')
+Greece <- get_playlist_audio_features('spotify', '37i9dQZEVXbJqdarpmTJDL')
+Guatemala <- get_playlist_audio_features('spotify', '37i9dQZEVXbLy5tBFyQvd4')
+Honduras <- get_playlist_audio_features('spotify', '37i9dQZEVXbJp9wcIM9Eo5')
+HongKong <- get_playlist_audio_features('spotify', '37i9dQZEVXbLwpL8TjsxOG')
+Hungary <- get_playlist_audio_features('spotify', '37i9dQZEVXbNHwMxAkvmF8')
+Iceland <- get_playlist_audio_features('spotify', '37i9dQZEVXbKMzVsSGQ49S')
+India <- get_playlist_audio_features('spotify', '37i9dQZEVXbLZ52XmnySJg')
+Indonesia <- get_playlist_audio_features('spotify', '37i9dQZEVXbObFQZ3JLcXt')
+Ireland <- get_playlist_audio_features('spotify', '37i9dQZEVXbKM896FDX8L1')
+Isreal <- get_playlist_audio_features('spotify', '37i9dQZEVXbJ6IpvItkve3')
+Italy <- get_playlist_audio_features('spotify', '37i9dQZEVXbIQnj7RRhdSX')
+Japan <- get_playlist_audio_features('spotify', '37i9dQZEVXbKXQ4mDTEBXq')
+Latvia <- get_playlist_audio_features('spotify', '37i9dQZEVXbJWuzDrTxbKS')
+Lithuania <- get_playlist_audio_features('spotify', '37i9dQZEVXbMx56Rdq5lwc')
+Luxemberg <- get_playlist_audio_features('spotify', '37i9dQZEVXbKGcyg6TFGx6')
+Malaysia <- get_playlist_audio_features('spotify', '37i9dQZEVXbJlfUljuZExa')
+Mexico <- get_playlist_audio_features('spotify', '37i9dQZEVXbO3qyFxbkOE1')
+Netherlands <- get_playlist_audio_features('spotify', '37i9dQZEVXbKCF6dqVpDkS')
+NewZealand <- get_playlist_audio_features('spotify', '37i9dQZEVXbM8SIrkERIYl')
+Nicaragua <- get_playlist_audio_features('spotify', '37i9dQZEVXbISk8kxnzfCq')
+Norway <- get_playlist_audio_features('spotify', '37i9dQZEVXbJvfa0Yxg7E7')
+Panama <- get_playlist_audio_features('spotify', '37i9dQZEVXbKypXHVwk1f0')
+Paraguay <- get_playlist_audio_features('spotify', '37i9dQZEVXbNOUPGj7tW6T')
+Peru <- get_playlist_audio_features('spotify', '37i9dQZEVXbJfdy5b0KP7W')
+Philipenes <- get_playlist_audio_features('spotify', '37i9dQZEVXbNBz9cRCSFkY')
+Poland <- get_playlist_audio_features('spotify', '37i9dQZEVXbN6itCcaL3Tt')
+Portugal <- get_playlist_audio_features('spotify', '37i9dQZEVXbKyJS56d1pgi')
+Romania <- get_playlist_audio_features('spotify', '37i9dQZEVXbNZbJ6TZelCq')
+Russia <- get_playlist_audio_features('spotify', '37i9dQZEVXbL8l7ra5vVdB')
+Singapore <- get_playlist_audio_features('spotify', '37i9dQZEVXbK4gjvS1FjPY')
+Slovakia <- get_playlist_audio_features('spotify', '37i9dQZEVXbKIVTPX9a2Sb')
+SouthAfrica <- get_playlist_audio_features('spotify', '37i9dQZEVXbMH2jvi6jvjk')
+Spain <- get_playlist_audio_features('spotify', '37i9dQZEVXbNFJfN1Vw8d9')
+Sweden <- get_playlist_audio_features('spotify', '37i9dQZEVXbLoATJ81JYXz')
+Switzerland <- get_playlist_audio_features('spotify', '37i9dQZEVXbJiyhoAPEfMK')
+Taiwan <- get_playlist_audio_features('spotify', '37i9dQZEVXbMnZEatlMSiu')
+Thailand <- get_playlist_audio_features('spotify', '37i9dQZEVXbMnz8KIWsvf9')
+Turkey <- get_playlist_audio_features('spotify', '37i9dQZEVXbIVYVBNw9D5K')
+Ukraine <- get_playlist_audio_features('spotify', '37i9dQZEVXbKkidEfWYRuD')
+UK <- get_playlist_audio_features('spotify', '37i9dQZEVXbLnolsZ8PSNw')
+Uruguay <- get_playlist_audio_features('spotify', '37i9dQZEVXbMJJi3wgRbAy')
+Vietnam <- get_playlist_audio_features('spotify', '37i9dQZEVXbLdGSmz6xilI')
+
+
+
+
+Countries <- rbind(Global, Argentina, Australia, Austria, Belgium, Bolivia, Brazil, Bulgaria, Canada, 
+                   Chile, Columbia, CostaRica, CzechRep, Denmark, DominicanRep, Ecuador, ElSalvador, Estonia, 
+                   Finland, France, Germany, Greece, Guatemala, Honduras, HongKong, Hungary, Iceland, India, 
+                   Indonesia, Ireland, Isreal, Italy, Japan, Latvia, Lithuania, Luxemberg, Malaysia ,
+                   Mexico, Netherlands, NewZealand, Norway, Panama, Paraguay, Peru, Philipenes, Poland,
+                   Portugal, Romania, Russia, Singapore, Slovakia, SouthAfrica, Spain, Sweden, Switzerland, 
+                   Taiwan, Thailand, Turkey, Ukraine, UK, Uruguay, Vietnam)
+
+
+
+```
+
+```{r}
+#Displays popularity by valence of the us data
+b <- plot_ly(US, x = ~valence, y = ~track.popularity,
+                  type = 'scatter',
+                  hoverinfo = 'text',
+                  text = ~paste('<br> Album: ', track.album.name,
+                                '<br> Song: ', track.name,
+                                '<br> Release: ', track.album.release_date))
+b
+
+
+
+#Filters out track with popularity less than 60 from us data
+US1 <- US %>%
+  filter(track.popularity >= 60)
+
+#Makes a correlation matrix - US
+spotnum <- US1[,c(6,7,8,9,10,11,12,13,14,15,16,31,37)]
+M <- cor(spotnum)
+P <- cor.mtest(spotnum, conf.level = .95)
+corrplot(M, method = "color", type = "upper", p.mat = P$p, insig = "label_sig",
+         sig.level = c(.001, .01, .05), pch.cex = .9, pch.col = "white")
+
+
+#Boxplot for popularity by explicit with anova test - US
+ggboxplot(US1, x = "track.explicit", y  = "track.popularity", color = "track.explicit")
+res.aov <- aov(track.popularity ~ track.explicit, data = US1)
+summary(res.aov)
+
+#Boxplot for popularity by album vs single with anova test - US
+ggboxplot(US1, x = "track.album.album_type", y  = "track.popularity", color = "track.album.album_type")
+res.aov1 <- aov(track.popularity ~ track.album.album_type, data = US1)
+summary(res.aov1)
+
+
+
+
+#Filters out track with popularity less than 60 from global data
+Countries1 <- Countries %>%
+  filter(track.popularity >= 60)
+
+#Makes a correlation matrix - Global
+spotnum <- Countries1[,c(6,7,8,9,10,11,12,13,14,15,16,31,37)]
+M <- cor(spotnum)
+P <- cor.mtest(spotnum, conf.level = .95)
+corrplot(M, method = "color", type = "upper", p.mat = P$p, insig = "label_sig",
+         sig.level = c(.001, .01, .05), pch.cex = .9, pch.col = "white")
+
+#Boxplot for popularity by explicit with anova test - Global
+ggboxplot(Countries1, x = "track.explicit", y  = "track.popularity", color = "track.explicit")
+res.aov2 <- aov(track.popularity ~ track.explicit, data = Countries1)
+summary(res.aov2)
+
+#Boxplot for popularity by album vs single with anova test - Global
+ggboxplot(Countries1, x = "track.album.album_type", y  = "track.popularity", color = "track.album.album_type")
+res.aovC <- aov(track.popularity ~ track.album.album_type, data = Countries1)
+summary(res.aovC)
+
+
+
+
+
+```
